@@ -7,10 +7,12 @@ export default function Input({
 }: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
-      className={clsx(
-        "w-full p-3 rounded-lg bg-slate-800 outline-none focus:ring-2 ring-indigo-500",
-        className
-      )}
+      className={`w-full p-3 rounded-lg outline-none ${className}`}
+      style={{
+        backgroundColor: "var(--card)",
+        color: "var(--text)",
+        border: "1px solid var(--border)",
+      }}
       {...props}
     />
   );

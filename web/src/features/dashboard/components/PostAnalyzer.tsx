@@ -43,8 +43,10 @@ export default function PostAnalyzer() {
         {result ? (
           <AnalysisResult data={result} />
         ) : (
-          <Card className="h-full flex items-center justify-center text-slate-400">
-            No analysis yet
+          <Card className="h-full flex items-center justify-center">
+            <span style={{ color: "var(--muted)" }}>
+              No analysis yet
+            </span>
           </Card>
         )}
       </div>

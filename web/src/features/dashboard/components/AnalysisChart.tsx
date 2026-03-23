@@ -16,8 +16,8 @@ const data = [
 
 export default function AnalysisChart() {
   return (
-    <div className="h-64">
-      <ResponsiveContainer>
+    <div className="w-full h-[300px] min-h-[300px]">
+      <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie data={data} dataKey="value" outerRadius={80}>
             {data.map((_, i) => (

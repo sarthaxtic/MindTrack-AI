@@ -10,10 +10,11 @@ export default function Card({
 }) {
   return (
     <div
-      className={clsx(
-        "bg-slate-900 border border-slate-700 rounded-2xl p-5 shadow-sm",
-        className
-      )}
+      className={`rounded-2xl p-5 shadow-sm border ${className}`}
+      style={{
+        backgroundColor: "var(--card)",
+        borderColor: "var(--border)",
+      }}
     >
       {children}
     </div>

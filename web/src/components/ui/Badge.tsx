@@ -14,7 +14,13 @@ export default function Badge({
   };
 
   return (
-    <span className={clsx("px-2 py-1 rounded-md text-xs", styles[variant])}>
+    <span
+      className="px-2 py-1 rounded-md text-xs"
+      style={{
+        backgroundColor: "var(--border)",
+        color: "var(--text)",
+      }}
+    >
       {children}
     </span>
   );
