@@ -16,7 +16,7 @@ const dummyHistory: HistoryItem[] = [
     text: "I feel very sad and tired",
     prediction: "Depression",
     confidence: 0.8,
-    explanation: [],
+    explanation: ["Detected negative sentiment"],
     createdAt: new Date().toISOString(),
   },
 ];
@@ -28,24 +28,32 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-
-        <StatsCards />
-
-        <PostAnalyzer />
-
-        <AnalysisChart />
-
-        <div>
-          <h2 className="text-lg font-semibold mb-2">
-            Recent Analyses
-          </h2>
-          <HistoryList data={dummyHistory} />
+      <div id="dashboard" className="space-y-8">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
 
           <Button onClick={() => exportToPDF("dashboard")}>
             Export Report
           </Button>
+        </div>
+
+        {/* Stats */}
+        <StatsCards />
+
+        {/* Analyzer */}
+        <PostAnalyzer />
+
+        {/* Chart */}
+        <AnalysisChart />
+
+        {/* History */}
+        <div id="history">
+          <h2 className="text-lg font-semibold mb-3">
+            Recent Analyses
+          </h2>
+
+          <HistoryList data={dummyHistory} />
         </div>
       </div>
     </DashboardLayout>
