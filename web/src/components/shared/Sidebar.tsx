@@ -16,16 +16,37 @@ export default function Sidebar() {
     router.push("/login");
   };
 
+  const handleNavigate = (path: string, sectionId?: string) => {
+    if (pathname !== "/dashboard") {
+      router.push("/dashboard");
+      setTimeout(() => {
+        if (sectionId) {
+          document
+            .getElementById(sectionId)
+            ?.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      if (sectionId) {
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   const navItems = [
     {
       label: "Dashboard",
       icon: BarChart,
-      path: "/dashboard",
+      onClick: () => handleNavigate("/dashboard"),
+      active: pathname === "/dashboard",
     },
     {
       label: "History",
       icon: History,
-      path: "/dashboard#history",
+      onClick: () => handleNavigate("/dashboard", "history"),
+      active: false, // optional improvement later
     },
   ];
 
@@ -43,17 +64,16 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="space-y-2">
-          {navItems.map((item) => {
+          {navItems.map((item, index) => {
             const Icon = item.icon;
-            const active = pathname === item.path;
 
             return (
               <button
-                key={item.path}
-                onClick={() => router.push(item.path)}
+                key={index}
+                onClick={item.onClick}
                 className={clsx(
                   "flex items-center gap-2 w-full p-2 rounded-lg transition",
-                  active
+                  item.active
                     ? "bg-indigo-500/20 text-indigo-400"
                     : "text-slate-400 hover:bg-slate-700"
                 )}

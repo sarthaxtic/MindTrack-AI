@@ -6,6 +6,10 @@
   --foreground: #f8fafc;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .light {
   --background: #ffffff;
   --foreground: #0f172a;
