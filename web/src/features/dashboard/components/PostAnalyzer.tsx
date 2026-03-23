@@ -5,6 +5,7 @@ import PostInput from "@/features/posts/components/PostInput";
 import LanguageSelect from "@/features/posts/components/LanguageSelect";
 import AnalysisResult from "@/features/posts/components/AnalysisResult";
 import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import { postService } from "@/features/posts/services/post.service";
 import { AnalysisResponse } from "@/features/posts/types/post.types";
 
@@ -24,16 +25,29 @@ export default function PostAnalyzer() {
   };
 
   return (
-    <div className="space-y-4 max-w-2xl">
-      <PostInput value={text} onChange={setText} />
+    <div className="grid gap-6 md:grid-cols-2">
+      {/* Input Section */}
+      <Card className="space-y-4">
+        <h2 className="text-lg font-semibold">Input Post</h2>
 
-      <LanguageSelect value={language} onChange={setLanguage} />
+        <PostInput value={text} onChange={setText} />
 
-      <Button onClick={handleAnalyze} disabled={loading}>
-        {loading ? "Analyzing..." : "Analyze"}
-      </Button>
+        <LanguageSelect value={language} onChange={setLanguage} />
 
-      {result && <AnalysisResult data={result} />}
+        <Button onClick={handleAnalyze} disabled={loading}>
+          {loading ? "Analyzing..." : "Analyze"}
+        </Button>
+      </Card>
+
+      <div>
+        {result ? (
+          <AnalysisResult data={result} />
+        ) : (
+          <Card className="h-full flex items-center justify-center text-slate-400">
+            No analysis yet
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
