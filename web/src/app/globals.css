@@ -1,9 +1,7 @@
-/* ─── Font imports MUST precede @import "tailwindcss" ──────────────────────── */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap");
 
 @import "tailwindcss";
 
-/* ─── Design Tokens ────────────────────────────────────────────────────────── */
 :root {
   --bg:              #080c10;
   --bg-secondary:    #0d1117;
@@ -52,7 +50,6 @@
   --text-muted:      #94a3b8;
 }
 
-/* ─── Base ─────────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
@@ -68,13 +65,11 @@ body {
   min-height: 100dvh;
 }
 
-/* ─── Scrollbar ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-/* ─── Utilities ─────────────────────────────────────────────────────────────── */
 .bg-grid {
   background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
   background-size: 28px 28px;
@@ -87,7 +82,6 @@ body {
   border: 1px solid var(--border);
 }
 
-/* ─── Animations ────────────────────────────────────────────────────────────── */
 @keyframes scan {
   0%   { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
@@ -119,7 +113,6 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
-/* ─── Focus ─────────────────────────────────────────────────────────────────── */
 *:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;

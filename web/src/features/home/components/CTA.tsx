@@ -6,8 +6,6 @@ import { ArrowRight } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { CTA_HEADLINE, CTA_SUBLINE } from "@/constants/home";
 
-// Inline GitHub SVG — lucide-react v1 exports it as "Github" (capital G)
-// but some bundled versions omit it entirely; an inline path is the safest fallback.
 function GitHubIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
@@ -36,9 +34,9 @@ export default function CTA({ onStart }: { onStart: () => void }) {
         initial={{ opacity: 0, y: 24 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative rounded-[var(--radius-xl)] overflow-hidden
-                   border border-[var(--border-active)]
-                   bg-[var(--accent-dim)]
+        className="relative rounded-xl overflow-hidden
+                   border border-(--border-active)
+                   bg-(--accent-dim)
                    p-12 md:p-20 text-center"
       >
         {/* Radial glow */}
@@ -58,11 +56,11 @@ export default function CTA({ onStart }: { onStart: () => void }) {
         <div className="relative z-10 space-y-6 max-w-2xl mx-auto">
           <h2
             className="text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.03em]
-                       text-[var(--text)] leading-tight"
+                       text-(--text) leading-tight"
           >
             {CTA_HEADLINE}
           </h2>
-          <p className="text-[var(--text-secondary)] text-base leading-relaxed">
+          <p className="text-(--text-secondary) text-base leading-relaxed">
             {CTA_SUBLINE}
           </p>
 
@@ -84,7 +82,7 @@ export default function CTA({ onStart }: { onStart: () => void }) {
             </Button>
           </div>
 
-          <p className="text-xs text-[var(--text-muted)]">
+          <p className="text-xs text-(--text-muted)">
             No credit card required · Cancel any time
           </p>
         </div>
