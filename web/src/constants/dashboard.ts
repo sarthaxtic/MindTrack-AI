@@ -4,6 +4,10 @@ import {
   History,
   Settings,
   LogOut,
+  User,
+  Bell,
+  Key,
+  AlertTriangle,
 } from "lucide-react";
 
 // ─── Nav links ────────────────────────────────────────────────────────────────
@@ -12,6 +16,13 @@ export const SIDEBAR_NAV = [
   { label: "Analyze",   href: "/dashboard#analyzer", icon: FileText        },
   { label: "History",   href: "/dashboard#history",  icon: History         },
   { label: "Settings",  href: "/settings",           icon: Settings        },
+] as const;
+
+export const SETTINGS_SUBMENU = [
+  { id: "profile",       label: "Profile",        icon: User          },
+  { id: "notifications", label: "Notifications",  icon: Bell          },
+  { id: "api",           label: "API & Integrations", icon: Key       },
+  { id: "danger",        label: "Danger zone",    icon: AlertTriangle },
 ] as const;
 
 export const SIDEBAR_BOTTOM = [

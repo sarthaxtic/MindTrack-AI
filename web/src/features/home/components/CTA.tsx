@@ -73,13 +73,16 @@ export default function CTA({ onStart }: { onStart: () => void }) {
             >
               Start for free
             </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              icon={<GitHubIcon size={16} />}
+            <a
+              href="https://github.com/sarthaxtic/MindTrack-AI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
             >
-              View on GitHub
-            </Button>
+              <Button variant="secondary" size="lg" icon={<GitHubIcon size={16} />}>
+                View on GitHub
+              </Button>
+            </a>
           </div>
 
           <p className="text-xs text-(--text-muted)">

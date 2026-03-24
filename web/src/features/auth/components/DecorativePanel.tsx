@@ -135,7 +135,7 @@ export default function DecorativePanel() {
             ))}
           </div>
           <p className="text-[11px] text-(--text-muted)">
-            +240 researchers this month
+            +5 researchers this month
           </p>
         </div>
       </div>

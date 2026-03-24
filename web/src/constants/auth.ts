@@ -45,7 +45,7 @@ export const AUTH_FIELDS = {
 
 export const AUTH_PANEL_STATS = [
   { value: "94.2%", label: "Accuracy"  },
-  { value: "30+",   label: "Languages" },
+  { value: "5+",   label: "Languages" },
   { value: "<2s",   label: "Latency"   },
 ] as const;
 

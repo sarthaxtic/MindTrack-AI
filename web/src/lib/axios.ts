@@ -14,7 +14,6 @@ api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("token");
-
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -42,17 +41,19 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (res) => res,
   (error) => {
+    const data = error?.response?.data;
+    // Extract error message – backend may use "error" or "message"
     const message =
-      error?.response?.data?.message ||
+      data?.error ||
+      data?.message ||
       error?.message ||
       "Something went wrong";
 
-    // Debug log
     console.error("API Error:", {
       url: error.config?.url,
       status: error.response?.status,
       message,
-      data: error.response?.data,
+      data,
     });
 
     return Promise.reject(new Error(message));
