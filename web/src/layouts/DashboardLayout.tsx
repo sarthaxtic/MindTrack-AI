@@ -1,6 +1,11 @@
+// src/layouts/DashboardLayout.tsx
+"use client";
+
+import { useState } from "react";
 import Sidebar from "@/components/shared/Sidebar";
 import DashboardHeader from "./components/DashboardHeader";
 import DashboardFooter from "./components/DashboardFooter";
+import MobileSidebar from "./components/MobileSidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,24 +18,25 @@ export default function DashboardLayout({
   title = "Dashboard",
   subtitle,
 }: DashboardLayoutProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleMenuClick = () => {
+    setIsMobileMenuOpen(true);
+  };
+
   return (
-    /*
-     * h-screen + overflow-hidden on the root locks the total height to the
-     * viewport. The sidebar gets h-full so it fills exactly that height.
-     * Only the main column scrolls via overflow-y-auto.
-     */
     <div className="flex h-screen overflow-hidden bg-(--bg)">
-      {/* Sidebar — full viewport height, never scrolls */}
+      {/* Desktop sidebar */}
       <Sidebar />
 
-      {/* Main column — flex column, fills remaining width, scrolls independently */}
-      <div className="flex flex-col flex-1 min-w-0 h-full">
-        <DashboardHeader title={title} subtitle={subtitle} />
+      {/* Mobile sidebar (drawer) */}
+      <MobileSidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
-        <main
-          id="dashboard-content"
-          className="flex-1 overflow-y-auto px-6 py-6"
-        >
+      {/* Main column */}
+      <div className="flex flex-col flex-1 min-w-0 h-full">
+        <DashboardHeader title={title} subtitle={subtitle} onMenuClick={handleMenuClick} />
+
+        <main id="dashboard-content" className="flex-1 overflow-y-auto px-6 py-6">
           {children}
         </main>
 

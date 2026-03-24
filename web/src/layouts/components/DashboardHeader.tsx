@@ -1,6 +1,7 @@
+// src/layouts/components/DashboardHeader.tsx
 "use client";
 
-import { Download, Bell } from "lucide-react";
+import { Download, Bell, Menu } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import Button from "@/components/ui/Button";
 import { exportToPDF } from "@/utils/exportPDF";
@@ -8,9 +9,10 @@ import { exportToPDF } from "@/utils/exportPDF";
 interface HeaderProps {
   title: string;
   subtitle?: string;
+  onMenuClick?: () => void; // New prop for mobile menu
 }
 
-export default function DashboardHeader({ title, subtitle }: HeaderProps) {
+export default function DashboardHeader({ title, subtitle, onMenuClick }: HeaderProps) {
   const user = useAuthStore((s) => s.user);
 
   // Friendly greeting based on time of day
@@ -24,16 +26,27 @@ export default function DashboardHeader({ title, subtitle }: HeaderProps) {
                  px-6 shrink-0 bg-[var(--bg)] border-b border-[var(--border)]"
       style={{ backdropFilter: "blur(12px)", background: "rgba(8,12,16,0.92)" }}
     >
-      {/* Left: breadcrumb / title */}
-      <div className="min-w-0">
-        <h1 className="text-sm font-semibold text-[var(--text)] truncate tracking-[-0.01em]">
-          {title}
-        </h1>
-        {subtitle && (
-          <p className="text-xs text-[var(--text-muted)] truncate">
-            {subtitle}
-          </p>
-        )}
+      {/* Left side: menu button + title */}
+      <div className="flex items-center gap-3 min-w-0">
+        {/* Mobile menu button */}
+        <button
+          onClick={onMenuClick}
+          className="md:hidden p-2 -ml-2 rounded-md hover:bg-(--surface-raised) transition-colors"
+          aria-label="Open menu"
+        >
+          <Menu size={20} />
+        </button>
+
+        <div className="min-w-0">
+          <h1 className="text-sm font-semibold text-[var(--text)] truncate tracking-[-0.01em]">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="text-xs text-[var(--text-muted)] truncate">
+              {subtitle}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Right: actions */}
