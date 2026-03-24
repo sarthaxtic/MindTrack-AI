@@ -13,26 +13,26 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="hidden md:flex flex-col w-56 shrink-0 min-h-screen
-                 bg-[var(--surface)] border-r border-[var(--border)]"
+      className="hidden md:flex flex-col w-56 shrink-0 h-full
+                 bg-(--surface) border-r border-(--border)"
     >
       {/* Brand */}
-      <div className="flex items-center gap-2.5 px-5 h-14 border-b border-[var(--border)] shrink-0">
+      <div className="flex items-center gap-2.5 px-5 h-14 border-b border-(--border) shrink-0">
         <div
-          className="size-7 rounded-lg bg-[var(--accent)] flex items-center justify-center shrink-0"
+          className="size-7 rounded-lg bg-(--accent) flex items-center justify-center shrink-0"
           style={{ boxShadow: "0 0 14px var(--accent-glow)" }}
         >
           <Brain size={14} className="text-[#080c10]" />
         </div>
-        <span className="font-semibold text-sm tracking-[-0.02em] text-[var(--text)]">
-          MindTrack<span className="text-[var(--accent)]">AI</span>
+        <span className="font-semibold text-sm tracking-[-0.02em] text-(--text)">
+          MindTrack<span className="text-(--accent)">AI</span>
         </span>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5">
         <p
-          className="px-2 pb-2 text-[10px] uppercase tracking-widest text-[var(--text-muted)]"
+          className="px-2 pb-2 text-[10px] uppercase tracking-widest text-(--text-muted)"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           Menu
@@ -45,18 +45,18 @@ export default function Sidebar() {
               key={label}
               href={href}
               className={clsx(
-                "flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] text-sm",
+                "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm",
                 "transition-all duration-150 group",
                 isActive
-                  ? "bg-[var(--accent-dim)] text-[var(--accent)] border border-[var(--border-active)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface-raised)]"
+                  ? "bg-(--accent-dim) text-(--accent) border border-(--border-active)"
+                  : "text-(--text-secondary) hover:text-(--text) hover:bg-(--surface-raised)"
               )}
             >
               <Icon
                 size={15}
                 className={clsx(
                   "shrink-0 transition-colors",
-                  isActive ? "text-[var(--accent)]" : "text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]"
+                  isActive ? "text-(--accent)" : "text-(--text-muted) group-hover:text-(--text-secondary)"
                 )}
               />
               {label}
@@ -66,16 +66,16 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom section */}
-      <div className="px-3 pb-4 space-y-0.5 border-t border-[var(--border)] pt-3">
+      <div className="px-3 pb-4 space-y-0.5 border-t border-(--border) pt-3">
         {SIDEBAR_BOTTOM.map(({ label, href, icon: Icon }) => (
           <Link
             key={label}
             href={href}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] text-sm
-                       text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/5
+            className="flex items-center gap-2.5 px-3 py-2 rounded-md text-sm
+                       text-(--text-secondary) hover:text-red-400 hover:bg-red-500/5
                        transition-all duration-150 group"
           >
-            <Icon size={15} className="shrink-0 text-[var(--text-muted)] group-hover:text-red-400 transition-colors" />
+            <Icon size={15} className="shrink-0 text-(--text-muted) group-hover:text-red-400 transition-colors" />
             {label}
           </Link>
         ))}
@@ -84,16 +84,16 @@ export default function Sidebar() {
         {user && (
           <div className="flex items-center gap-2.5 px-3 py-2 mt-1">
             <div
-              className="size-7 rounded-full bg-[var(--accent)] flex items-center justify-center
+              className="size-7 rounded-full bg-(--accent) flex items-center justify-center
                          text-[#080c10] text-[10px] font-bold shrink-0"
             >
               {user.email.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-[var(--text)] truncate">
+              <p className="text-xs font-medium text-(--text) truncate">
                 {user.email}
               </p>
-              <p className="text-[10px] text-[var(--text-muted)]">Free plan</p>
+              <p className="text-[10px] text-(--text-muted)">Free plan</p>
             </div>
           </div>
         )}
