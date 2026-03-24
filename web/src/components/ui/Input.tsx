@@ -55,7 +55,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               "text-xs font-medium tracking-wide uppercase",
               error
                 ? "text-red-400"
-                : "text-[var(--text-secondary)]"
+                : "text-(--text-secondary)"
             )}
             style={{ fontFamily: "var(--font-mono)" }}
           >
@@ -68,7 +68,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {/* Left icon */}
           {iconLeft && (
             <span
-              className="absolute left-3 size-4 text-[var(--text-muted)] pointer-events-none flex items-center"
+              className="absolute left-3 size-4 text-(--text-muted) pointer-events-none flex items-center"
               aria-hidden
             >
               {iconLeft}
@@ -81,17 +81,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             type={resolvedType}
             disabled={disabled}
             className={clsx(
-              "w-full h-11 rounded-[var(--radius-md)] text-sm",
-              "bg-[var(--surface)] text-[var(--text)]",
+              "w-full h-11 rounded-md text-sm",
+              "bg-(--surface) text-(--text)",
               "border transition-all duration-200 outline-none",
-              "placeholder:text-[var(--text-muted)]",
+              "placeholder:text-(--text-muted)",
               // padding — adjust for icons
               iconLeft  ? "pl-10" : "pl-4",
               hasRightSlot ? "pr-10" : "pr-4",
               // border state
               error
                 ? "border-red-500/60 focus:border-red-400 shadow-[0_0_0_3px_rgba(239,68,68,0.1)]"
-                : "border-[var(--border)] focus:border-[var(--border-active)] focus:shadow-[0_0_0_3px_var(--accent-glow)]",
+                : "border-(--border) focus:border-(--border-active) focus:shadow-[0_0_0_3px_var(--accent-glow)]",
               disabled && "opacity-40 cursor-not-allowed",
               className
             )}
@@ -107,7 +107,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setRevealed((v) => !v)}
-              className="absolute right-3 size-4 text-[var(--text-muted)] hover:text-[var(--text)]
+              className="absolute right-3 size-4 text-(--text-muted) hover:text-(--text)
                          transition-colors flex items-center justify-center"
               aria-label={revealed ? "Hide password" : "Show password"}
             >
@@ -115,7 +115,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </button>
           ) : iconRight ? (
             <span
-              className="absolute right-3 size-4 text-[var(--text-muted)] pointer-events-none flex items-center"
+              className="absolute right-3 size-4 text-(--text-muted) pointer-events-none flex items-center"
               aria-hidden
             >
               {iconRight}
@@ -139,7 +139,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {!error && hint && (
           <p
             id={`${inputId}-hint`}
-            className="text-xs text-[var(--text-muted)]"
+            className="text-xs text-(--text-muted)"
           >
             {hint}
           </p>

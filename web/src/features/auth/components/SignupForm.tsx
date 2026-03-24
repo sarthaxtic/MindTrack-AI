@@ -90,19 +90,19 @@ export default function SignupForm() {
       {/* Terms notice */}
       <motion.p
         variants={field}
-        className="text-xs text-[var(--text-muted)] leading-relaxed"
+        className="text-xs text-(--text-muted) leading-relaxed"
       >
         By creating an account you agree to our{" "}
         <Link
           href="/terms"
-          className="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors underline underline-offset-2"
+          className="text-(--text-secondary) hover:text-(--accent) transition-colors underline underline-offset-2"
         >
           Terms of Service
         </Link>{" "}
         and{" "}
         <Link
           href="/privacy"
-          className="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors underline underline-offset-2"
+          className="text-(--text-secondary) hover:text-(--accent) transition-colors underline underline-offset-2"
         >
           Privacy Policy
         </Link>
@@ -123,25 +123,25 @@ export default function SignupForm() {
 
       {/* Divider */}
       <motion.div variants={field} className="flex items-center gap-3">
-        <div className="flex-1 h-px bg-[var(--border)]" />
+        <div className="flex-1 h-px bg-(--border)" />
         <span
-          className="text-[11px] text-[var(--text-muted)] uppercase tracking-widest"
+          className="text-[11px] text-(--text-muted) uppercase tracking-widest"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           or
         </span>
-        <div className="flex-1 h-px bg-[var(--border)]" />
+        <div className="flex-1 h-px bg-(--border)" />
       </motion.div>
 
       {/* Switch to login */}
       <motion.p
         variants={field}
-        className="text-center text-sm text-[var(--text-secondary)]"
+        className="text-center text-sm text-(--text-secondary)"
       >
         {COPY.switchText}{" "}
         <Link
           href={COPY.switchHref}
-          className="text-[var(--accent)] font-medium hover:underline underline-offset-4 transition-all"
+          className="text-(--accent) font-medium hover:underline underline-offset-4 transition-all"
         >
           {COPY.switchLink}
         </Link>

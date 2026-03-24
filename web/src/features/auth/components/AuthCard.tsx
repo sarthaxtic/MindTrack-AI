@@ -24,8 +24,8 @@ function DecorativePanel() {
     <motion.div
       variants={panelVariants}
       className="hidden lg:flex flex-col justify-between
-                 w-[420px] shrink-0 relative overflow-hidden
-                 bg-[var(--surface)] border-r border-[var(--border)]
+                 w-105 shrink-0 relative overflow-hidden
+                 bg-(--surface) border-r border-(--border)
                  p-10"
     >
       {/* Dot grid */}
@@ -53,13 +53,13 @@ function DecorativePanel() {
       <div className="relative z-10">
         <Link href="/" className="inline-flex items-center gap-2 group">
           <div
-            className="size-8 rounded-lg bg-[var(--accent)] flex items-center justify-center"
+            className="size-8 rounded-lg bg-(--accent) flex items-center justify-center"
             style={{ boxShadow: "0 0 20px var(--accent-glow)" }}
           >
             <Brain size={16} className="text-[#080c10]" />
           </div>
-          <span className="font-semibold text-sm tracking-[-0.02em] text-[var(--text)]">
-            MindTrack<span className="text-[var(--accent)]">AI</span>
+          <span className="font-semibold text-sm tracking-[-0.02em] text-(--text)">
+            MindTrack<span className="text-(--accent)">AI</span>
           </span>
         </Link>
       </div>
@@ -71,17 +71,17 @@ function DecorativePanel() {
           {AUTH_PANEL_STATS.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-[var(--radius-md)] bg-[var(--surface-raised)]
-                         border border-[var(--border)] p-3 text-center"
+              className="rounded-md bg-(--surface-raised)
+                         border border-(--border) p-3 text-center"
             >
               <div
-                className="text-xl font-bold text-[var(--text)] tracking-tight"
+                className="text-xl font-bold text-(--text) tracking-tight"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 {stat.value}
               </div>
               <div
-                className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest mt-0.5"
+                className="text-[10px] text-(--text-muted) uppercase tracking-widest mt-0.5"
               >
                 {stat.label}
               </div>
@@ -91,24 +91,24 @@ function DecorativePanel() {
 
         {/* Quote */}
         <blockquote
-          className="rounded-[var(--radius-lg)] bg-[var(--accent-dim)]
-                     border border-[var(--border-active)] p-5 space-y-3"
+          className="rounded-lg bg-(--accent-dim)
+                     border border-(--border-active) p-5 space-y-3"
         >
-          <p className="text-sm text-[var(--text-secondary)] leading-relaxed italic">
+          <p className="text-sm text-(--text-secondary) leading-relaxed italic">
             &ldquo;{AUTH_PANEL_QUOTE.text}&rdquo;
           </p>
           <footer className="flex items-center gap-2.5">
             <div
-              className="size-7 rounded-full bg-[var(--accent)] flex items-center justify-center
+              className="size-7 rounded-full bg-(--accent) flex items-center justify-center
                          text-[#080c10] text-[10px] font-bold shrink-0"
             >
               M
             </div>
             <div>
-              <div className="text-xs font-semibold text-[var(--text)]">
+              <div className="text-xs font-semibold text-(--text)">
                 {AUTH_PANEL_QUOTE.author}
               </div>
-              <div className="text-[10px] text-[var(--text-muted)]">
+              <div className="text-[10px] text-(--text-muted)">
                 {AUTH_PANEL_QUOTE.role}
               </div>
             </div>
@@ -117,14 +117,14 @@ function DecorativePanel() {
 
         {/* Decorative horizontal rule with label */}
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-[var(--border)]" />
+          <div className="flex-1 h-px bg-(--border)" />
           <span
-            className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest"
+            className="text-[10px] text-(--text-muted) uppercase tracking-widest"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             Trusted by researchers
           </span>
-          <div className="flex-1 h-px bg-[var(--border)]" />
+          <div className="flex-1 h-px bg-(--border)" />
         </div>
 
         {/* Avatar stack — decorative */}
@@ -133,7 +133,7 @@ function DecorativePanel() {
             {["#06b6d4", "#818cf8", "#10b981", "#f59e0b"].map((color, i) => (
               <div
                 key={i}
-                className="size-7 rounded-full border-2 border-[var(--surface)] flex items-center justify-center
+                className="size-7 rounded-full border-2 border-(--surface) flex items-center justify-center
                            text-[9px] font-bold text-[#080c10]"
                 style={{ background: color }}
               >
@@ -141,7 +141,7 @@ function DecorativePanel() {
               </div>
             ))}
           </div>
-          <p className="text-[11px] text-[var(--text-muted)]">
+          <p className="text-[11px] text-(--text-muted)">
             +240 researchers this month
           </p>
         </div>
@@ -149,7 +149,7 @@ function DecorativePanel() {
 
       {/* Footer */}
       <div className="relative z-10">
-        <p className="text-[11px] text-[var(--text-muted)]">
+        <p className="text-[11px] text-(--text-muted)">
           © {new Date().getFullYear()} MindTrack AI. All rights reserved.
         </p>
       </div>
@@ -174,22 +174,22 @@ function FormPanel({ heading, subheading, children }: FormPanelProps) {
         {/* Mobile brand mark — hidden on lg where the panel shows it */}
         <Link href="/" className="inline-flex items-center gap-2 lg:hidden">
           <div
-            className="size-7 rounded-lg bg-[var(--accent)] flex items-center justify-center"
+            className="size-7 rounded-lg bg-(--accent) flex items-center justify-center"
             style={{ boxShadow: "0 0 14px var(--accent-glow)" }}
           >
             <Brain size={13} className="text-[#080c10]" />
           </div>
-          <span className="font-semibold text-sm text-[var(--text)]">
-            MindTrack<span className="text-[var(--accent)]">AI</span>
+          <span className="font-semibold text-sm text-(--text)">
+            MindTrack<span className="text-(--accent)">AI</span>
           </span>
         </Link>
 
         {/* Heading block */}
         <div className="space-y-1.5">
-          <h1 className="text-2xl font-bold tracking-[-0.03em] text-[var(--text)]">
+          <h1 className="text-2xl font-bold tracking-[-0.03em] text-(--text)">
             {heading}
           </h1>
-          <p className="text-sm text-[var(--text-secondary)]">{subheading}</p>
+          <p className="text-sm text-(--text-secondary)">{subheading}</p>
         </div>
 
         {/* Slot for form */}
@@ -211,7 +211,7 @@ export default function AuthCard({ heading, subheading, children }: AuthCardProp
     <motion.div
       initial="hidden"
       animate="show"
-      className="flex min-h-screen bg-[var(--bg)]"
+      className="flex min-h-screen bg-(--bg)"
     >
       <DecorativePanel />
       <FormPanel heading={heading} subheading={subheading}>

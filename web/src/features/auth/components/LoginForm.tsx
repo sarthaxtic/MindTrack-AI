@@ -78,7 +78,7 @@ export default function LoginForm() {
       <motion.div variants={field} className="flex justify-end -mt-1">
         <Link
           href="/forgot-password"
-          className="text-xs text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+          className="text-xs text-(--text-muted) hover:text-(--accent) transition-colors"
         >
           {COPY.forgotPassword}
         </Link>
@@ -98,25 +98,25 @@ export default function LoginForm() {
 
       {/* Divider */}
       <motion.div variants={field} className="flex items-center gap-3">
-        <div className="flex-1 h-px bg-[var(--border)]" />
+        <div className="flex-1 h-px bg-(--border)" />
         <span
-          className="text-[11px] text-[var(--text-muted)] uppercase tracking-widest"
+          className="text-[11px] text-(--text-muted) uppercase tracking-widest"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           or
         </span>
-        <div className="flex-1 h-px bg-[var(--border)]" />
+        <div className="flex-1 h-px bg-(--border)" />
       </motion.div>
 
       {/* Switch to signup */}
       <motion.p
         variants={field}
-        className="text-center text-sm text-[var(--text-secondary)]"
+        className="text-center text-sm text-(--text-secondary)"
       >
         {COPY.switchText}{" "}
         <Link
           href={COPY.switchHref}
-          className="text-[var(--accent)] font-medium hover:underline underline-offset-4 transition-all"
+          className="text-(--accent) font-medium hover:underline underline-offset-4 transition-all"
         >
           {COPY.switchLink}
         </Link>
