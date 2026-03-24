@@ -43,7 +43,6 @@ export default function DashboardPage() {
       setHistory(mapped);
       setError(null);
     } catch (err) {
-      console.error(err);
       setError("Could not load analysis history.");
     }
   }, []);

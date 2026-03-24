@@ -27,7 +27,6 @@ export default function ApiTab() {
         setApiKey(keyRes.data.apiKey);
         setUsage(usageRes.data);
       } catch (err) {
-        console.error(err);
         toast.error("Failed to load API key data");
       } finally {
         setLoading(false);

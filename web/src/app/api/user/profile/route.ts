@@ -38,7 +38,6 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Profile update error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

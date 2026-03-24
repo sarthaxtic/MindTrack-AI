@@ -19,15 +19,6 @@ api.interceptors.request.use(
       }
     }
 
-    // Debug (only in development)
-    if (process.env.NODE_ENV === "development") {
-      console.log("API Request:", {
-        url: config.url,
-        method: config.method,
-        data: config.data,
-      });
-    }
-
     return config;
   },
   (error) => Promise.reject(error)
@@ -48,13 +39,6 @@ api.interceptors.response.use(
       data?.message ||
       error?.message ||
       "Something went wrong";
-
-    console.error("API Error:", {
-      url: error.config?.url,
-      status: error.response?.status,
-      message,
-      data,
-    });
 
     return Promise.reject(new Error(message));
   }

@@ -19,7 +19,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json(user.notificationPrefs || {});
   } catch (error) {
-    console.error("Get notifications error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -47,7 +46,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(user.notificationPrefs);
   } catch (error) {
-    console.error("Save notifications error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

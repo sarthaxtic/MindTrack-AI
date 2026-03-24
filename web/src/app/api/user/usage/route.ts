@@ -26,7 +26,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ requests, limit });
   } catch (error) {
-    console.error("Usage error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

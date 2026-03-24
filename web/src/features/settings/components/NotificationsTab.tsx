@@ -23,7 +23,6 @@ export default function NotificationsTab() {
         const res = await api.get("/user/notifications");
         setPrefs(res.data);
       } catch (err) {
-        console.error(err);
         toast.error("Failed to load notification preferences");
       } finally {
         setLoading(false);

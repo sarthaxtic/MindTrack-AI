@@ -51,7 +51,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(saved);
   } catch (error) {
-    console.error("Analysis POST error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -69,7 +68,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json(history);
   } catch (error) {
-    console.error("Analysis GET error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

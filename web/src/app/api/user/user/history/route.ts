@@ -16,7 +16,6 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ deletedCount: result.deletedCount });
   } catch (error) {
-    console.error("Clear history error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

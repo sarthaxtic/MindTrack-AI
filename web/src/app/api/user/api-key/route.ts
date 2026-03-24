@@ -33,7 +33,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ apiKey });
   } catch (error) {
-    console.error("Get API key error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
