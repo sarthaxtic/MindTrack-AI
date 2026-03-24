@@ -1,3 +1,4 @@
+// src/app/dashboard/page.tsx
 "use client";
 
 import { useRequireAuth } from "@/hooks/useRequireAuth";
@@ -8,9 +9,8 @@ import AnalysisChart from "@/features/dashboard/components/AnalysisChart";
 import HistoryList from "@/features/dashboard/components/HistoryList";
 import { HistoryItem } from "@/features/dashboard/types/history.types";
 import { useEffect, useState, useCallback } from "react";
-import { MentalState } from "@/features/posts/types/post.types"; // Import MentalState
+import { MentalState } from "@/features/posts/types/post.types";
 
-// Type for the MongoDB document returned from the API
 interface AnalysisDocument {
   _id: string;
   text: string;
@@ -35,11 +35,10 @@ export default function DashboardPage() {
       if (!res.ok) throw new Error("Failed to fetch history");
       const data: AnalysisDocument[] = await res.json();
 
-      // Map MongoDB documents to HistoryItem shape, casting prediction to MentalState
       const mapped: HistoryItem[] = data.map((item) => ({
         id: item._id,
         text: item.text,
-        prediction: item.prediction as MentalState, // Type assertion
+        prediction: item.prediction as MentalState,
         confidence: item.confidence,
         explanation: item.explanation,
         createdAt: item.createdAt,
@@ -59,7 +58,6 @@ export default function DashboardPage() {
     }
   }, [user, fetchHistory]);
 
-  // Refresh history after a new analysis is submitted
   const refreshHistory = () => {
     fetchHistory();
   };
@@ -90,9 +88,9 @@ export default function DashboardPage() {
       subtitle="Monitor mental health signals across your analyzed posts"
     >
       <div className="space-y-8 max-w-6xl">
-        <StatsCards />
+        <StatsCards history={history} />
         <PostAnalyzer onAnalysisComplete={refreshHistory} />
-        <AnalysisChart />
+        <AnalysisChart history={history} />
         <HistoryList data={history} />
       </div>
     </DashboardLayout>
