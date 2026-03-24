@@ -83,9 +83,10 @@ export const LANGUAGES = [
 // ─── Prediction → badge variant mapping ───────────────────────────────────────
 export const PREDICTION_VARIANT = {
   Depression: "danger",
-  Anxiety:    "warning",
-  Stress:     "warning",
-  Neutral:    "success",
+  Anxiety: "warning",
+  Stress: "warning",
+  Bipolar: "warning",
+  Neutral: "success",
 } as const;
 
 // ─── Post analyzer copy ───────────────────────────────────────────────────────
@@ -95,3 +96,31 @@ export const ANALYZER_COPY = {
   maxChars: 1000,
   emptyState: "Run an analysis to see results here.",
 } as const;
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+export const SETTINGS_TABS = [
+  { id: "profile",       label: "Profile"        },
+  { id: "notifications", label: "Notifications"  },
+  { id: "api",           label: "API & Integrations" },
+  { id: "danger",        label: "Danger zone"    },
+] as const;
+
+export type SettingsTabId = typeof SETTINGS_TABS[number]["id"];
+
+export const NOTIFICATION_PREFS = [
+  {
+    id:          "high_risk",
+    label:       "High-risk alerts",
+    description: "Get notified immediately when a post is classified as high risk.",
+  },
+  {
+    id:          "weekly_digest",
+    label:       "Weekly digest",
+    description: "Receive a summary of all analyses every Monday morning.",
+  },
+  {
+    id:          "model_updates",
+    label:       "Model updates",
+    description: "Know when the detection model is retrained or updated.",
+  },
+] as const;
