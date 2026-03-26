@@ -1,2 +1,12 @@
 final_mental_health_model/
 *.safetensors
+
+# Python
+venv/
+__pycache__/
+
+# Model cache
+model/cache/
+
+# OS
+.DS_Store

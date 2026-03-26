@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_PATH = "amanbhatt0910/mindtrack-mental-model"
+MODEL_PATH = "./final_mental_health_model"
 
 tokenizer = None
 model = None
@@ -42,13 +42,10 @@ def load_model():
     global tokenizer, model
 
     if tokenizer is None or model is None:
-        print("🚀 Loading model from HuggingFace...")
+        print("🚀 Loading model from LOCAL...")
 
         tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-        model = AutoModelForSequenceClassification.from_pretrained(
-            MODEL_PATH,
-            cache_dir="./cache"
-        )
+        model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
 
         model.eval()
         torch.set_num_threads(1)

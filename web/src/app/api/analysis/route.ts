@@ -29,31 +29,17 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    // const mlResponse = await fetch(`${process.env.ML_API_URL}/predict`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ text }),
-    // });
+    const mlResponse = await fetch(`${process.env.ML_API_URL}/predict`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
 
-    // if (!mlResponse.ok) {
-    //   throw new Error("ML API failed");
-    // }
-
-    const mlResponse = await fetch(
-      `https://api-inference.huggingface.co/models/${process.env.HF_MODEL}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.HF_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: text,
-        }),
-      }
-    );
+    if (!mlResponse.ok) {
+      throw new Error("ML API failed");
+    }
 
     const mlData = await mlResponse.json();
 
