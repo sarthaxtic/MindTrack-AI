@@ -29,14 +29,17 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    // 🔥 CALL YOUR ML MODEL
-    const mlResponse = await fetch("http://127.0.0.1:8000/predict", {
+    const mlResponse = await fetch(`${process.env.ML_API_URL}/predict`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ text }),
     });
+
+    if (!mlResponse.ok) {
+      throw new Error("ML API failed");
+    }
 
     const mlData = await mlResponse.json();
 
