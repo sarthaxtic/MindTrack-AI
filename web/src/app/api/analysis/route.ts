@@ -11,7 +11,6 @@ async function getUserIdFromRequest(req: Request): Promise<string | null> {
   if (!token) return null;
   try {
     const decoded = verifyToken(token);
-    // Our token payload contains { id: user._id } from login/signup routes
     if (typeof decoded === "string") return null;
     return decoded.id as string;
   } catch {
@@ -30,28 +29,48 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    // Dummy AI (replace later)
-    const result = text.includes("sad")
-      ? {
-          prediction: "Depression",
-          confidence: 0.87,
-          explanation: ["Negative sentiment detected"],
-        }
-      : {
-          prediction: "Neutral",
-          confidence: 0.65,
-          explanation: ["Balanced tone"],
-        };
+    // 🔥 CALL YOUR ML MODEL
+    const mlResponse = await fetch("http://127.0.0.1:8000/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    const mlData = await mlResponse.json();
+
+    const labelMap: Record<string, string> = {
+      anxiety: "Anxiety",
+      stress: "Stress",
+      depression: "Depression",
+      normal: "Neutral",
+      suicidal: "Depression",
+      bipolar: "Bipolar",
+      "personality disorder": "Bipolar",
+    };
+
+    const result = {
+      prediction: labelMap[mlData.label] || "Neutral",
+      confidence: mlData.confidence || 0,
+      explanation: [
+        `Detected ${mlData.label} with ${(mlData.confidence * 100).toFixed(2)}% confidence`,
+      ],
+    };
 
     const saved = await Analysis.create({
       userId,
       text,
+      language,
       ...result,
     });
 
     return NextResponse.json(saved);
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 

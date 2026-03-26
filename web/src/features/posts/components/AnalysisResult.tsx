@@ -9,7 +9,9 @@ import { PREDICTION_VARIANT } from "@/constants/dashboard";
 
 // ─── Confidence bar ───────────────────────────────────────────────────────────
 function ConfidenceBar({ value }: { value: number }) {
-  const pct = Math.round(value * 100);
+  const pct = value * 100;
+  const displayPct = pct.toFixed(2);
+
   const color =
     pct >= 80 ? "bg-red-400"
     : pct >= 60 ? "bg-amber-400"
@@ -18,13 +20,11 @@ function ConfidenceBar({ value }: { value: number }) {
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between items-center">
-        <span className="text-xs text-[var(--text-muted)]"
-              style={{ fontFamily: "var(--font-mono)" }}>
+        <span className="text-xs text-[var(--text-muted)]">
           Confidence
         </span>
-        <span className="text-xs font-bold text-[var(--text)]"
-              style={{ fontFamily: "var(--font-mono)" }}>
-          {pct}%
+        <span className="text-xs font-bold text-[var(--text)]">
+          {displayPct}%
         </span>
       </div>
       <div className="h-1.5 w-full rounded-full bg-[var(--surface-raised)] overflow-hidden">
