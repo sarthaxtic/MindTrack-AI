@@ -145,7 +145,7 @@ export function assignHospitalDistances(
     const offset = OFFSETS[i % OFFSETS.length];
     return {
       ...h,
-      distance: parseFloat((offset.base + Math.random() * 1.5).toFixed(1)),
+      distance: parseFloat((offset.base + offset.extra).toFixed(1)),
       simLat: lat + offset.dlat,
       simLng: lng + offset.dlng,
     };

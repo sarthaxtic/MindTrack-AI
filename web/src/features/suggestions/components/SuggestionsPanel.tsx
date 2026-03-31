@@ -25,7 +25,7 @@ import {
 } from "@/features/suggestions/data/suggestionsData";
 
 // ─── Default cities for fallback ────────────────────────────────────────────
-
+const DEFAULT_LOCATIONS = [
   { name: "Mumbai", lat: 19.076, lng: 72.8777 },
   { name: "Delhi", lat: 28.6139, lng: 77.209 },
   { name: "Bangalore", lat: 12.9716, lng: 77.5946 },
