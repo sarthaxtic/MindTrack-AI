@@ -14,6 +14,7 @@ import { MentalState, AnalysisResponse } from "@/features/posts/types/post.types
 import { api } from "@/lib/axios";
 import { useTranslation } from "@/hooks/useTranslation";
 import CounselorAlertBanner from "@/features/counselor-alert/components/CounselorAlertBanner";
+import SuggestionsPanel from "@/features/suggestions/components/SuggestionsPanel";
 
 interface AnalysisDocument {
   _id: string;
@@ -114,6 +115,7 @@ export default function DashboardPage() {
           onAnalysisComplete={handleAnalysisComplete}
           initialResult={currentAnalysis}
         />
+        <SuggestionsPanel analysis={currentAnalysis} />
         <AnalysisChart history={history} />
         <HistoryList data={history} />
         <MentalHealthInfo />
