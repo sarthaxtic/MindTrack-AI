@@ -7,9 +7,12 @@ import StatsCards from "@/features/dashboard/components/StatsCards";
 import PostAnalyzer from "@/features/dashboard/components/PostAnalyzer";
 import AnalysisChart from "@/features/dashboard/components/AnalysisChart";
 import HistoryList from "@/features/dashboard/components/HistoryList";
+import MentalHealthInfo from "@/features/dashboard/components/MentalHealthInfo";
+import StrugglingButton from "@/features/crisis/components/StrugglingButton";
 import { HistoryItem } from "@/features/dashboard/types/history.types";
 import { useEffect, useState, useCallback } from "react";
 import { MentalState } from "@/features/posts/types/post.types";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface AnalysisDocument {
   _id: string;
@@ -24,6 +27,7 @@ interface AnalysisDocument {
 
 export default function DashboardPage() {
   const user = useRequireAuth();
+  const { t } = useTranslation();
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,9 +70,9 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <DashboardLayout title="Dashboard" subtitle="Loading your analyses...">
+      <DashboardLayout title={t("dashboardTitle")} subtitle={t("loading")}>
         <div className="flex justify-center py-12">
-          <div className="animate-pulse text-muted">Loading...</div>
+          <div className="animate-pulse text-muted">{t("loading")}</div>
         </div>
       </DashboardLayout>
     );
@@ -76,7 +80,7 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <DashboardLayout title="Dashboard" subtitle="Monitor mental health signals">
+      <DashboardLayout title={t("dashboardTitle")} subtitle={t("dashboardSubtitle")}>
         <div className="text-red-500">Error: {error}</div>
       </DashboardLayout>
     );
@@ -84,14 +88,20 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout
-      title="Dashboard"
-      subtitle="Monitor mental health signals across your analyzed posts"
+      title={t("dashboardTitle")}
+      subtitle={t("dashboardSubtitle")}
     >
       <div className="space-y-8 max-w-6xl">
+        {/* I'm Struggling button — prominent, top of page */}
+        <div className="flex justify-end">
+          <StrugglingButton />
+        </div>
+
         <StatsCards history={history} />
         <PostAnalyzer onAnalysisComplete={refreshHistory} />
         <AnalysisChart history={history} />
         <HistoryList data={history} />
+        <MentalHealthInfo />
       </div>
     </DashboardLayout>
   );
