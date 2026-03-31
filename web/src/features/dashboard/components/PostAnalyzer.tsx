@@ -66,14 +66,15 @@ function SectionHeader() {
 }
 
 interface PostAnalyzerProps {
-  onAnalysisComplete?: () => void;
+  onAnalysisComplete?: (analysis: AnalysisResponse) => void;
+  initialResult?: AnalysisResponse | null;
 }
 
-export default function PostAnalyzer({ onAnalysisComplete }: PostAnalyzerProps) {
+export default function PostAnalyzer({ onAnalysisComplete, initialResult = null }: PostAnalyzerProps) {
   const [text, setText] = useState("");
   const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<AnalysisResponse | null>(null);
+  const [result, setResult] = useState<AnalysisResponse | null>(initialResult);
   const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
@@ -83,8 +84,8 @@ export default function PostAnalyzer({ onAnalysisComplete }: PostAnalyzerProps) 
     try {
       const res = await postService.analyze(text, language);
       setResult(res);
-      // Notify parent that analysis succeeded (so history can be refreshed)
-      onAnalysisComplete?.();
+      // Notify parent that analysis succeeded with the result
+      onAnalysisComplete?.(res);
     } catch {
       setError("Analysis failed. Please try again.");
     } finally {
