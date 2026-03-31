@@ -14,12 +14,12 @@ import { ANALYZER_COPY } from "@/constants/dashboard";
 // ─── Skeleton placeholder ─────────────────────────────────────────────────────
 function ResultSkeleton() {
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 space-y-5 h-full">
+    <div className="rounded-lg border border-(--border) bg-(--surface) p-6 space-y-5 h-full">
       <div className="flex items-center justify-between">
         <div className="h-4 w-28 rounded shimmer" />
         <div className="h-5 w-20 rounded-full shimmer" />
       </div>
-      <div className="h-px bg-[var(--border)]" />
+      <div className="h-px bg-(--border)" />
       <div className="space-y-2">
         <div className="h-3 w-20 rounded shimmer" />
         <div className="h-2 w-full rounded-full shimmer" />
@@ -66,14 +66,15 @@ function SectionHeader() {
 }
 
 interface PostAnalyzerProps {
-  onAnalysisComplete?: () => void;
+  onAnalysisComplete?: (analysis: AnalysisResponse) => void;
+  initialResult?: AnalysisResponse | null;
 }
 
-export default function PostAnalyzer({ onAnalysisComplete }: PostAnalyzerProps) {
+export default function PostAnalyzer({ onAnalysisComplete, initialResult = null }: PostAnalyzerProps) {
   const [text, setText] = useState("");
   const [language, setLanguage] = useState("en");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<AnalysisResponse | null>(null);
+  const [result, setResult] = useState<AnalysisResponse | null>(initialResult);
   const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
@@ -83,8 +84,8 @@ export default function PostAnalyzer({ onAnalysisComplete }: PostAnalyzerProps) 
     try {
       const res = await postService.analyze(text, language);
       setResult(res);
-      // Notify parent that analysis succeeded (so history can be refreshed)
-      onAnalysisComplete?.();
+      // Notify parent that analysis succeeded with the result
+      onAnalysisComplete?.(res);
     } catch {
       setError("Analysis failed. Please try again.");
     } finally {

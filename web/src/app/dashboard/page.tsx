@@ -10,7 +10,7 @@ import MentalHealthInfo from "@/features/dashboard/components/MentalHealthInfo";
 import StrugglingButton from "@/features/crisis/components/StrugglingButton";
 import { HistoryItem } from "@/features/dashboard/types/history.types";
 import { useEffect, useState, useCallback } from "react";
-import { MentalState } from "@/features/posts/types/post.types";
+import { MentalState, AnalysisResponse } from "@/features/posts/types/post.types";
 import { api } from "@/lib/axios";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -30,8 +30,15 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentAnalysis, setCurrentAnalysis] = useState<AnalysisResponse | null>(null);
 
   const fetchHistory = useCallback(async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    setError(null);
+    
     try {
       const res = await api.get<AnalysisDocument[]>("/analysis");
       const data = res.data;
@@ -45,21 +52,26 @@ export default function DashboardPage() {
         createdAt: item.createdAt,
       }));
       setHistory(mapped);
-      setError(null);
     } catch (err) {
       setError("Could not load analysis history.");
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchHistory();
     }
   }, [user, fetchHistory]);
 
   const refreshHistory = () => {
     fetchHistory();
+  };
+
+  const handleAnalysisComplete = (analysis: AnalysisResponse) => {
+    setCurrentAnalysis(analysis);
+    refreshHistory();
   };
 
   if (!user) return null;
@@ -87,11 +99,6 @@ export default function DashboardPage() {
       title={t("dashboardTitle")}
       subtitle={t("dashboardSubtitle")}
     >
-      {error && (
-        <div className="mb-4 rounded-md bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
-          {error}
-        </div>
-      )}
       <div className="space-y-8 max-w-6xl">
         {/* I'm Struggling button — prominent, top of page */}
         <div className="flex justify-end">
@@ -99,7 +106,10 @@ export default function DashboardPage() {
         </div>
 
         <StatsCards history={history} />
-        <PostAnalyzer onAnalysisComplete={refreshHistory} />
+        <PostAnalyzer 
+          onAnalysisComplete={handleAnalysisComplete}
+          initialResult={currentAnalysis}
+        />
         <AnalysisChart history={history} />
         <HistoryList data={history} />
         <MentalHealthInfo />
