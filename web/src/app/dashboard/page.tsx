@@ -1,4 +1,3 @@
-// src/app/dashboard/page.tsx
 "use client";
 
 import { useRequireAuth } from "@/hooks/useRequireAuth";
@@ -12,6 +11,7 @@ import StrugglingButton from "@/features/crisis/components/StrugglingButton";
 import { HistoryItem } from "@/features/dashboard/types/history.types";
 import { useEffect, useState, useCallback } from "react";
 import { MentalState } from "@/features/posts/types/post.types";
+import { api } from "@/lib/axios";
 import { useTranslation } from "@/hooks/useTranslation";
 
 interface AnalysisDocument {
@@ -29,15 +29,12 @@ export default function DashboardPage() {
   const user = useRequireAuth();
   const { t } = useTranslation();
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchHistory = useCallback(async () => {
     try {
-      setLoading(true);
-      const res = await fetch("/api/analysis");
-      if (!res.ok) throw new Error("Failed to fetch history");
-      const data: AnalysisDocument[] = await res.json();
+      const res = await api.get<AnalysisDocument[]>("/analysis");
+      const data = res.data;
 
       const mapped: HistoryItem[] = data.map((item) => ({
         id: item._id,
@@ -48,16 +45,15 @@ export default function DashboardPage() {
         createdAt: item.createdAt,
       }));
       setHistory(mapped);
+      setError(null);
     } catch (err) {
-      console.error(err);
       setError("Could not load analysis history.");
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchHistory();
     }
   }, [user, fetchHistory]);
@@ -91,6 +87,11 @@ export default function DashboardPage() {
       title={t("dashboardTitle")}
       subtitle={t("dashboardSubtitle")}
     >
+      {error && (
+        <div className="mb-4 rounded-md bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
       <div className="space-y-8 max-w-6xl">
         {/* I'm Struggling button — prominent, top of page */}
         <div className="flex justify-end">

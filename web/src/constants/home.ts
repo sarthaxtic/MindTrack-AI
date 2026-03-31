@@ -13,7 +13,7 @@ export const FEATURES = [
     icon: Globe,
     title: "Multi-language",
     description:
-      "Analyze posts across 30+ languages seamlessly — the model understands context, not just keywords.",
+      "Analyze posts across 5+ languages seamlessly — the model understands context, not just keywords.",
     tag: "Global",
   },
   {
@@ -71,9 +71,9 @@ export const HOW_IT_WORKS_STEPS = [
 // ─── Stats Bar ─────────────────────────────────────────────────────────────────
 export const STATS = [
   { value: "94.2%", label: "Detection accuracy" },
-  { value: "30+", label: "Languages supported" },
+  { value: "5+", label: "Languages supported" },
   { value: "<2s", label: "Average latency" },
-  { value: "1M+", label: "Posts analyzed" },
+  { value: "1K+", label: "Posts analyzed" },
 ] as const;
 
 // ─── CTA ───────────────────────────────────────────────────────────────────────

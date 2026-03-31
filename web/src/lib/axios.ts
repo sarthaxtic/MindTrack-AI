@@ -14,19 +14,9 @@ api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("token");
-
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-    }
-
-    // Debug (only in development)
-    if (process.env.NODE_ENV === "development") {
-      console.log("API Request:", {
-        url: config.url,
-        method: config.method,
-        data: config.data,
-      });
     }
 
     return config;
@@ -42,18 +32,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (res) => res,
   (error) => {
+    const data = error?.response?.data;
+    // Extract error message – backend may use "error" or "message"
     const message =
-      error?.response?.data?.message ||
+      data?.error ||
+      data?.message ||
       error?.message ||
       "Something went wrong";
-
-    // Debug log
-    console.error("API Error:", {
-      url: error.config?.url,
-      status: error.response?.status,
-      message,
-      data: error.response?.data,
-    });
 
     return Promise.reject(new Error(message));
   }
