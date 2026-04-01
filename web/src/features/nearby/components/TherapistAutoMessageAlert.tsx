@@ -20,6 +20,7 @@ import {
   NearbyTherapist,
   shouldSendTherapistAlert,
 } from "../services/therapistAutoMessage";
+import { useLocationStore } from "@/store/locationStore";
 
 interface TherapistAutoMessageAlertProps {
   analysis: AnalysisResponse;
@@ -116,9 +117,11 @@ export default function TherapistAutoMessageAlert({
   const [sentToIds, setSentToIds] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
 
+  const { latitude, longitude } = useLocationStore();
+
   if (!shouldSendTherapistAlert(analysis) || dismissed) return null;
 
-  const therapists = getNearbyTherapists(analysis);
+  const therapists = getNearbyTherapists(analysis, latitude ?? undefined, longitude ?? undefined);
   const selectedTherapist =
     therapists.find((t) => t.id === selectedTherapistId) ?? therapists[0];
 

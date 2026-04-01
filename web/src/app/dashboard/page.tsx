@@ -17,6 +17,8 @@ import CounselorAlertBanner from "@/features/counselor-alert/components/Counselo
 import RecommendationCards from "@/features/recommendations/components/RecommendationCards";
 import TherapistAutoMessageAlert from "@/features/nearby/components/TherapistAutoMessageAlert";
 import GamesAndMusicPanel from "@/features/recommendations/components/GamesAndMusicPanel";
+import { useLocation } from "@/hooks/useLocation";
+import { MapPin, Loader2, AlertCircle } from "lucide-react";
 
 export default function DashboardPage() {
   const user = useRequireAuth();
@@ -25,6 +27,9 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentAnalysis, setCurrentAnalysis] = useState<AnalysisResponse | null>(null);
+
+  // Initialize global location at the dashboard root so all child components share it
+  const { status: locationStatus } = useLocation();
 
   const fetchHistory = useCallback(async () => {
     if (!user) return;
@@ -100,6 +105,26 @@ export default function DashboardPage() {
         <div className="flex justify-end">
           <StrugglingButton />
         </div>
+
+        {/* Location status banner */}
+        {locationStatus === "loading" && (
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)] text-xs text-[var(--text-muted)]">
+            <Loader2 size={12} className="animate-spin shrink-0" />
+            {t("locationBannerDetermining")}
+          </div>
+        )}
+        {locationStatus === "granted" && (
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] border border-green-500/20 bg-green-500/6 text-xs text-green-400">
+            <MapPin size={12} className="shrink-0" />
+            {t("locationBannerGranted")}
+          </div>
+        )}
+        {locationStatus === "denied" && (
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] border border-amber-500/20 bg-amber-500/6 text-xs text-amber-400">
+            <AlertCircle size={12} className="shrink-0" />
+            {t("locationBannerDenied")}
+          </div>
+        )}
 
         <StatsCards history={history} />
         {currentAnalysis && (

@@ -190,6 +190,13 @@ export const translations = {
     entries: "Entries",
     total: "total",
     hideMessage: "Hide message",
+    gettingLocation: "Getting your location…",
+    locationFound: "Location found",
+    locationAccessDenied: "Location access denied",
+    retryLocation: "Retry",
+    locationBannerDetermining: "Determining your location for nearby recommendations…",
+    locationBannerGranted: "Location detected — showing nearby counselors & resources",
+    locationBannerDenied: "Location access denied — some features may be limited",
 
     // Voice Input
     voiceInput: "Voice Input",
@@ -465,6 +472,13 @@ export const translations = {
     entries: "प्रविष्टियाँ",
     total: "कुल",
     hideMessage: "संदेश छिपाएं",
+    gettingLocation: "आपका स्थान प्राप्त किया जा रहा है…",
+    locationFound: "स्थान मिला",
+    locationAccessDenied: "स्थान पहुँच अस्वीकृत",
+    retryLocation: "पुनः प्रयास करें",
+    locationBannerDetermining: "निकटवर्ती सुझावों के लिए आपका स्थान निर्धारित किया जा रहा है…",
+    locationBannerGranted: "स्थान पहचाना गया — निकटवर्ती काउंसलर और संसाधन दिखाए जा रहे हैं",
+    locationBannerDenied: "स्थान पहुँच अस्वीकृत — कुछ सुविधाएं सीमित हो सकती हैं",
 
     // Voice Input
     voiceInput: "आवाज इनपुट",
