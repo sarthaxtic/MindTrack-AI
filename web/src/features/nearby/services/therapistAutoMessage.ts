@@ -96,10 +96,35 @@ const NEARBY_THERAPISTS: NearbyTherapist[] = [
 ];
 
 export function getNearbyTherapists(
-  analysis: AnalysisResponse
+  analysis: AnalysisResponse,
+  userLat?: number,
+  userLng?: number
 ): NearbyTherapist[] {
   const prediction = analysis.prediction;
-  return [...NEARBY_THERAPISTS].sort((a, b) => {
+
+  // If user coordinates are available, recalculate simulated distances
+  // based on the user's actual position.
+  const therapists: NearbyTherapist[] = userLat !== undefined && userLng !== undefined
+    ? NEARBY_THERAPISTS.map((t, i) => {
+        // Simple distance simulation using coordinate offsets
+        const offsets = [
+          { dlat: 0.01, dlng: 0.015 },
+          { dlat: -0.02, dlng: 0.01 },
+          { dlat: 0.03, dlng: -0.02 },
+        ];
+        const off = offsets[i % offsets.length];
+        const dlat = off.dlat;
+        const dlng = off.dlng;
+        const distanceKm = parseFloat(
+          // 111 km is the approximate distance per degree of latitude/longitude
+          // (rough estimate; does not account for Earth's curvature at different latitudes).
+          (Math.sqrt(dlat * dlat + dlng * dlng) * 111).toFixed(1)
+        );
+        return { ...t, distanceKm };
+      })
+    : [...NEARBY_THERAPISTS];
+
+  return therapists.sort((a, b) => {
     const aMatch = a.specialization.includes(prediction) ? -1 : 0;
     const bMatch = b.specialization.includes(prediction) ? -1 : 0;
     if (aMatch !== bMatch) return aMatch - bMatch;

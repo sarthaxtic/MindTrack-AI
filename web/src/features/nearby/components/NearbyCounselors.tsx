@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Navigation, Star, ExternalLink, Filter, Map, List, Loader2, AlertCircle } from "lucide-react";
+import { MapPin, Navigation, Star, ExternalLink, Filter, Map, List, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLocation } from "@/hooks/useLocation";
 import { COUNSELLORS } from "@/constants/counsellors";
+import { useState } from "react";
 
 type DistanceFilter = "5" | "10" | "25" | "any";
 
@@ -49,46 +51,26 @@ function assignDistances(lat: number, lng: number): CounsellorWithDistance[] {
   }).sort((a, b) => a.distance - b.distance);
 }
 
-// Default locations when no permission given (major Indian cities)
-const DEFAULT_LOCATIONS = [
-  { name: "Mumbai", lat: 19.076, lng: 72.8777 },
-  { name: "Delhi", lat: 28.6139, lng: 77.209 },
-  { name: "Bangalore", lat: 12.9716, lng: 77.5946 },
-];
+// Fallback coordinates (geographic center of India) used only when location
+// is unavailable, so the map still renders something sensible.
+const INDIA_CENTER = { lat: 20.5937, lng: 78.9629 };
 
 export default function NearbyCounselors() {
   const { t } = useTranslation();
-  const [locationStatus, setLocationStatus] = useState<"idle" | "loading" | "granted" | "denied" | "error">("idle");
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const { latitude, longitude, status, error, refresh } = useLocation();
   const [distanceFilter, setDistanceFilter] = useState<DistanceFilter>("any");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [selectedCity, setSelectedCity] = useState(0);
 
-  const activeLoc = userCoords ?? DEFAULT_LOCATIONS[selectedCity];
+  const activeLoc =
+    latitude !== null && longitude !== null
+      ? { lat: latitude, lng: longitude }
+      : INDIA_CENTER;
 
-  // Compute counselors with distances derived from active location (no setState-in-effect)
+  // Compute counselors with distances derived from active location
   const counselors = useMemo(
     () => assignDistances(activeLoc.lat, activeLoc.lng),
     [activeLoc.lat, activeLoc.lng]
   );
-
-  const requestLocation = () => {
-    setLocationStatus("loading");
-    if (!navigator.geolocation) {
-      setLocationStatus("error");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLocationStatus("granted");
-        setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      },
-      () => {
-        setLocationStatus("denied");
-      },
-      { timeout: 10000 }
-    );
-  };
 
   const filtered = counselors.filter((c) => {
     if (distanceFilter === "any") return true;
@@ -104,56 +86,46 @@ export default function NearbyCounselors() {
 
   return (
     <div className="space-y-6">
-      {/* Location controls */}
-      <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
+      {/* Location status banner */}
+      <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-[var(--text)]">{t("findNearby")}</h3>
             <p className="text-xs text-[var(--text-muted)] mt-0.5">
-              {locationStatus === "granted"
-                ? t("usingCurrentLocation")
-                : locationStatus === "denied"
-                ? t("locationDenied")
-                : t("allowLocationPrompt")}
+              {status === "loading" && t("gettingLocation")}
+              {status === "granted" && t("usingCurrentLocation")}
+              {status === "denied" && t("locationDenied")}
+              {status === "error" && (error ?? t("locationError"))}
+              {status === "idle" && t("allowLocationPrompt")}
             </p>
           </div>
-          <button
-            onClick={requestLocation}
-            disabled={locationStatus === "loading"}
-            className="flex items-center gap-2 px-4 py-2 rounded-[var(--radius-md)] text-sm font-medium
-                       bg-[var(--accent)] text-[#080c10] hover:opacity-90 disabled:opacity-60
-                       transition-all duration-200"
-          >
-            {locationStatus === "loading" ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <Navigation size={14} />
-            )}
-            {locationStatus === "loading" ? t("locating") : t("findNearby")}
-          </button>
-        </div>
 
-        {/* City fallback selector */}
-        {locationStatus !== "granted" && (
+          {/* Status indicator */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[var(--text-muted)]">{t("browseByCity")}:</span>
-            <div className="flex gap-2">
-              {DEFAULT_LOCATIONS.map((loc, i) => (
-                <button
-                  key={loc.name}
-                  onClick={() => setSelectedCity(i)}
-                  className={`px-2.5 py-1 rounded-[var(--radius-sm)] text-xs transition-all
-                    ${selectedCity === i
-                      ? "bg-[var(--accent-dim)] text-[var(--accent)] border border-[var(--border-active)]"
-                      : "text-[var(--text-muted)] border border-[var(--border)] hover:border-[var(--border-active)]"
-                    }`}
-                >
-                  {loc.name}
-                </button>
-              ))}
-            </div>
+            {status === "loading" && (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] text-xs bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-muted)]">
+                <Loader2 size={12} className="animate-spin" />
+                {t("locating")}
+              </span>
+            )}
+            {status === "granted" && (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] text-xs bg-green-500/10 border border-green-500/20 text-green-400">
+                <MapPin size={12} />
+                {t("locationFound")}
+              </span>
+            )}
+            {(status === "denied" || status === "error" || status === "idle") && (
+              <button
+                onClick={refresh}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] text-xs font-medium
+                           bg-[var(--accent)] text-[#080c10] hover:opacity-90 transition-all duration-200"
+              >
+                <RefreshCw size={12} />
+                {status === "idle" ? t("findNearby") : t("retryLocation")}
+              </button>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Filters & view toggle */}
@@ -204,6 +176,11 @@ export default function NearbyCounselors() {
       <p className="text-xs text-[var(--text-muted)]">
         {filtered.length} {t("counselorsFound")}
         {distanceFilter !== "any" ? ` ${t("withinDistance")} ${distanceFilter} km` : ""}
+        {status === "idle" && (
+          <span className="ml-1 text-[var(--text-muted)] italic">
+            ({t("allowLocationPrompt")})
+          </span>
+        )}
       </p>
 
       {/* Map view */}
@@ -354,3 +331,4 @@ export default function NearbyCounselors() {
     </div>
   );
 }
+
