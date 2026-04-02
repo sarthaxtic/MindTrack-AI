@@ -1,30 +1,12 @@
-/**
- * GET /api/therapists/nearby?lat=<lat>&lng=<lng>&radius=<km>
- *
- * Returns therapists within `radius` km of the supplied coordinates,
- * sorted by real distance using the Haversine formula.
- *
- * Query params:
- *   lat    – user latitude  (required)
- *   lng    – user longitude (required)
- *   radius – search radius in km (default: 25)
- */
-
 import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
-import { TherapistModel } from "@/models/Therapist";
-import { THERAPIST_SEED_DATA } from "@/lib/therapistSeed";
 import { haversineDistance } from "@/services/locationService";
 import type { TherapistWithDistance } from "@/types/therapist.types";
 
-/** Auto-seed the collection with sample data if it is empty. */
-async function ensureSeeded(): Promise<void> {
-  const count = await TherapistModel.countDocuments();
-  if (count === 0) {
-    await TherapistModel.insertMany(THERAPIST_SEED_DATA);
-  }
-}
-
+/**
+ * GET /api/therapists/nearby?lat=<lat>&lng=<lng>&radius=<km>
+ *
+ * Fetches mental health professionals exclusively from Google Places API.
+ */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = req.nextUrl;
 
@@ -41,55 +23,84 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const lat = parseFloat(latStr);
   const lng = parseFloat(lngStr);
-  const radius = parseFloat(radiusStr);
+  const radiusKm = parseFloat(radiusStr);
 
-  if (isNaN(lat) || isNaN(lng) || isNaN(radius)) {
+  if (isNaN(lat) || isNaN(lng) || isNaN(radiusKm)) {
     return NextResponse.json(
       { error: "lat, lng, and radius must be valid numbers" },
       { status: 400 }
     );
   }
 
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  if (!apiKey) {
+    console.warn("GOOGLE_MAPS_API_KEY is missing. Returning empty list.");
+    return NextResponse.json([]);
+  }
+
+  const radiusMeters = Math.min(Math.round(radiusKm * 1000), 50000); // 50km max for Places API
+
   try {
-    await connectDB();
-    await ensureSeeded();
+    const url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json");
+    url.searchParams.append("location", `${lat},${lng}`);
+    url.searchParams.append("radius", radiusMeters.toString());
+    url.searchParams.append("keyword", "therapist OR psychologist OR psychiatrist OR counsellor");
+    url.searchParams.append("key", apiKey);
 
-    const all = await TherapistModel.find().lean();
+    const res = await fetch(url.toString(), {
+      next: { revalidate: 3600 }, // Cache for an hour to save quota
+    });
 
+    if (!res.ok) {
+      throw new Error(`Google Places API returned ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
+      throw new Error(`Google Places API error: ${data.status} - ${data.error_message || ""}`);
+    }
+
+    const results = data.results || [];
     const userCoords = { lat, lng };
 
-    const withDistances: TherapistWithDistance[] = all
-      .map((doc) => {
-        const distanceKm = haversineDistance(userCoords, doc.coordinates);
-        return {
-          id: String(doc._id),
-          name: doc.name,
-          title: doc.title,
-          specializations: doc.specializations,
-          credentials: doc.credentials,
-          languages: doc.languages,
-          experience: doc.experience,
-          bio: doc.bio,
-          avatar: doc.avatar,
-          email: doc.email,
-          phone: doc.phone,
-          clinicName: doc.clinicName,
-          clinicAddress: doc.clinicAddress,
-          city: doc.city,
-          coordinates: doc.coordinates,
-          available: doc.available,
-          nextAvailable: doc.nextAvailable,
-          availabilitySlots: doc.availabilitySlots,
-          fee: doc.fee,
-          rating: doc.rating,
-          reviews: doc.reviews,
-          distanceKm,
-        };
-      })
-      .filter((t) => t.distanceKm <= radius)
+    const formattedTherapists: TherapistWithDistance[] = results.map((place: any) => {
+      const pLat = place.geometry?.location?.lat || 0;
+      const pLng = place.geometry?.location?.lng || 0;
+      const dist = haversineDistance(userCoords, { lat: pLat, lng: pLng });
+
+      return {
+        id: place.place_id,
+        name: place.name,
+        title: "Mental Health Professional",
+        specializations: ["Counseling", "Therapy"], 
+        credentials: ["Google Verified"],
+        languages: ["English"],
+        experience: "Clinic / Office",
+        bio: `Located at ${place.vicinity}. Verified via Google Maps.`,
+        avatar: place.name.charAt(0).toUpperCase(),
+        email: "Contact via Maps",
+        phone: "See Google Maps",
+        clinicName: place.name,
+        clinicAddress: place.vicinity || "Address not provided",
+        city: "Local area",
+        coordinates: { lat: pLat, lng: pLng },
+        available: place.business_status === "OPERATIONAL",
+        nextAvailable: new Date().toISOString(),
+        availabilitySlots: [],
+        fee: "Contact for pricing",
+        rating: place.rating || 0,
+        reviews: place.user_ratings_total || 0,
+        distanceKm: Number(dist.toFixed(1)),
+      };
+    });
+
+    // Filter by our exact radius request and sort
+    const finalTherapists = formattedTherapists
+      .filter((t) => t.distanceKm <= radiusKm)
       .sort((a, b) => a.distanceKm - b.distanceKm);
 
-    return NextResponse.json(withDistances);
+    return NextResponse.json(finalTherapists);
   } catch (err) {
     console.error("GET /api/therapists/nearby error:", err);
     return NextResponse.json(

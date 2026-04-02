@@ -86,6 +86,7 @@ export default function VoiceRecorder({
       <AnimatePresence mode="wait">
         {isListening && (
           <motion.div
+            key="status-listening"
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -8 }}
@@ -113,6 +114,7 @@ export default function VoiceRecorder({
 
         {interimTranscript && (
           <motion.p
+            key="status-transcript"
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.6 }}
             className="text-xs text-[var(--text-muted)] italic max-w-[200px] truncate"
@@ -126,6 +128,7 @@ export default function VoiceRecorder({
       <AnimatePresence>
         {error && (
           <motion.div
+            key="status-error"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}

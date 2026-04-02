@@ -11,6 +11,7 @@ const AnalysisSchema = new Schema(
     mlData: {
       label: String,
       confidence: Number,
+      labels: [String],
       probabilities: {
         type: Map,
         of: Number,
@@ -20,7 +21,24 @@ const AnalysisSchema = new Schema(
         confidence: Number,
       }],
       rawProbs: [Number],
+      shapData: {
+        tokens: [String],
+        scores: [Number],
+      },
     },
+    // Gemini fallback fields
+    geminiInsight: {
+      emotionalInsight: String,
+      suggestedSupport: [String],
+      riskLevel: { type: String, enum: ["Low", "Medium", "High"] },
+    },
+    fallbackUsed: { type: Boolean, default: false },
+    riskLevel: { type: String, enum: ["Low", "Medium", "High"], default: "Low" },
+    crisisEscalation: { type: Boolean, default: false },
+    // Multilingual fields
+    detectedLanguage: String,
+    wasTranslated: { type: Boolean, default: false },
+    originalText: String,
   },
   { timestamps: true }
 );

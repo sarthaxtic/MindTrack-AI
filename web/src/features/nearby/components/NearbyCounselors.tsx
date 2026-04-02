@@ -23,6 +23,16 @@ export default function NearbyCounselors() {
   const [counselors, setCounselors] = useState<TherapistWithDistance[]>([]);
   const [fetchLoading, setFetchLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [mapKey, setMapKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/maps/config")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.apiKey) setMapKey(data.apiKey);
+      })
+      .catch((err) => console.error("Maps config error:", err));
+  }, []);
 
   const activeLoc =
     latitude !== null && longitude !== null
@@ -187,22 +197,22 @@ export default function NearbyCounselors() {
             exit={{ opacity: 0 }}
             className="rounded-[var(--radius-lg)] overflow-hidden border border-[var(--border)]"
           >
-            {/* OpenStreetMap embed centred on the active location */}
+            {/* Google Maps embed centred on the active location */}
             <div className="relative h-[400px]">
-              <iframe
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${
-                  activeLoc.lng - 0.15
-                }%2C${
-                  activeLoc.lat - 0.15
-                }%2C${
-                  activeLoc.lng + 0.15
-                }%2C${
-                  activeLoc.lat + 0.15
-                }&layer=mapnik`}
-                className="w-full h-full"
-                title="Counselor locations map"
-                loading="lazy"
-              />
+              {mapKey ? (
+                <iframe
+                  title="Counselor locations map"
+                  className="w-full h-full border-0"
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps/embed/v1/search?key=${mapKey}&q=therapist+psychologist+counselor&center=${activeLoc.lat},${activeLoc.lng}&zoom=13`}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-[var(--surface-raised)]">
+                  <Loader2 size={24} className="animate-spin text-[var(--text-muted)]" />
+                </div>
+              )}
               {/* Overlay listing nearest therapists */}
               <div className="absolute top-3 right-3 bg-[var(--surface-overlay)] backdrop-blur-sm rounded-[var(--radius-md)] border border-[var(--border)] p-3 max-w-[200px]">
                 <p className="text-xs font-medium text-[var(--text)] mb-2">{filtered.length} {t("nearby")}</p>
@@ -286,7 +296,7 @@ export default function NearbyCounselors() {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${counselor.coordinates.lat},${counselor.coordinates.lng}`}
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${counselor.coordinates.lat},${counselor.coordinates.lng}&destination_place_id=${counselor.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[var(--radius-md)] text-xs
@@ -297,7 +307,7 @@ export default function NearbyCounselors() {
                     {t("getDirections")}
                   </a>
                   <a
-                    href={`https://www.openstreetmap.org/?mlat=${counselor.coordinates.lat}&mlon=${counselor.coordinates.lng}&zoom=15`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${counselor.coordinates.lat},${counselor.coordinates.lng}&query_place_id=${counselor.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center px-3 py-2 rounded-[var(--radius-md)] text-xs
@@ -305,7 +315,7 @@ export default function NearbyCounselors() {
                                hover:border-[var(--border-active)] hover:text-[var(--text)] transition-all"
                     aria-label={t("showOnMap")}
                   >
-                    <ExternalLink size={11} />
+                    <Map size={11} />
                   </a>
                 </div>
               </motion.div>

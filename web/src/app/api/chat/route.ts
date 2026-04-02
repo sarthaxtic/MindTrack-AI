@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { getUserIdFromRequest } from "@/lib/auth";
+import {
+  chatWithGemini,
+  isComplexInput,
+} from "@/lib/gemini";
 
 // ─── Crisis keywords (HIGHEST PRIORITY) ────────────────────────────────────
 const CRISIS_KEYWORDS = [
@@ -222,101 +226,6 @@ function isCrisisMessage(message: string): boolean {
   return CRISIS_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
-// ─── Gemini fallback (multilingual) ────────────────────────────────────────
-async function callGemini(
-  message: string,
-  history: { role: string; content: string }[],
-  lang: string
-): Promise<string> {
-  const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error("Gemini API key not configured");
-  }
-
-  const langInstruction = lang === "hi"
-    ? "The user is communicating in Hindi or Hinglish. You MUST respond in Hindi (Devanagari script) or Hinglish (Hindi written in English). Match the user's language style. If they write in Devanagari, reply in Devanagari. If they write Hinglish, reply in Hinglish."
-    : "The user is communicating in English. Respond in English.";
-
-  const systemPrompt = `You are a compassionate mental health support companion named "MindTrack Buddy". You must:
-
-STRICT RULES:
-- NEVER diagnose medical or psychiatric conditions
-- NEVER prescribe or suggest specific medications
-- NEVER provide clinical treatment plans
-- NEVER dismiss or minimize the user's feelings
-- Always suggest professional help for serious concerns
-- If anyone expresses suicidal ideation, IMMEDIATELY provide crisis hotline numbers (988 for US, 9152987821 for India iCall, 1860-2662-345 for Vandrevala Foundation)
-- Be empathetic, warm, and validating
-- Focus on coping strategies, self-care tips, and emotional support
-- Use simple, friendly language
-- Keep responses concise (2-3 short paragraphs max)
-- Use relevant emojis sparingly for warmth
-
-LANGUAGE INSTRUCTION:
-${langInstruction}
-
-You are NOT a therapist. You are a supportive friend who listens and guides.`;
-
-  const contents = [
-    {
-      role: "user",
-      parts: [{ text: systemPrompt }],
-    },
-    {
-      role: "model",
-      parts: [{ text: lang === "hi"
-        ? "मैं समझ गया/गई। मैं एक सहानुभूतिपूर्ण मानसिक स्वास्थ्य सहयोगी के रूप में सभी नियमों का पालन करूंगा/करूंगी।"
-        : "I understand. I will act as a compassionate mental health support companion following all the strict rules."
-      }],
-    },
-    ...history.slice(-6).map((m) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    })),
-    {
-      role: "user",
-      parts: [{ text: message }],
-    },
-  ];
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents,
-        safetySettings: [
-          { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          topP: 0.9,
-          maxOutputTokens: 500,
-        },
-      }),
-    }
-  );
-
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("Gemini API error:", errText);
-    throw new Error(`Gemini API failed: ${res.status}`);
-  }
-
-  const data = await res.json();
-  const text =
-    data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-    (lang === "hi"
-      ? "मुझे अभी जवाब देने में कठिनाई हो रही है। कृपया जानिए कि मैं आपके लिए यहाँ हूँ। 💙"
-      : "I'm having trouble responding right now. Please know that I'm here for you. 💙");
-
-  return text;
-}
-
 // ─── API Handler ─────────────────────────────────────────────────────────────
 export async function POST(req: Request) {
   try {
@@ -345,26 +254,65 @@ export async function POST(req: Request) {
 
     // STEP 2: Rule-based check
     const ruleResponse = findRuleMatch(message, lang);
-    if (ruleResponse) {
+
+    // STEP 3: Complexity check — if rule matched but input is complex, prefer Gemini
+    const complex = isComplexInput(message);
+
+    if (ruleResponse && !complex) {
       return NextResponse.json({
         reply: ruleResponse,
         source: "rule",
         isCrisis: false,
         detectedLanguage: lang,
+        geminiUsed: false,
       });
     }
 
-    // STEP 3: Gemini fallback for complex queries (with language context)
+    // STEP 4: Gemini fallback for complex queries OR no rule match
     try {
-      const geminiReply = await callGemini(message, sessionHistory, lang);
+      const geminiReply = await chatWithGemini(
+        message,
+        sessionHistory.slice(-5), // Cap conversation memory at 5 messages
+        lang
+      );
+
+      // Post-process Gemini response: check for crisis signals in the response
+      const responseHasCrisisSignals = CRISIS_KEYWORDS.some((kw) =>
+        geminiReply.toLowerCase().includes(kw)
+      );
+
       return NextResponse.json({
         reply: geminiReply,
         source: "gemini",
-        isCrisis: false,
+        isCrisis: responseHasCrisisSignals,
         detectedLanguage: lang,
+        geminiUsed: true,
+        complexityDetected: complex,
+        ...(responseHasCrisisSignals
+          ? {
+              crisisResources: [
+                { name: "Suicide & Crisis Lifeline", phone: "988", description: "24/7 free support" },
+                { name: "Crisis Text Line", phone: "Text HOME to 741741", description: "Free crisis counseling via text" },
+                { name: "iCall (India)", phone: "9152987821", description: "Psychosocial helpline by TISS" },
+                { name: "Vandrevala Foundation", phone: "1860-2662-345", description: "24/7 mental health support" },
+              ],
+            }
+          : {}),
       });
     } catch (err) {
       console.error("Gemini fallback failed:", err);
+
+      // If we had a rule response, use it as final fallback
+      if (ruleResponse) {
+        return NextResponse.json({
+          reply: ruleResponse,
+          source: "rule",
+          isCrisis: false,
+          detectedLanguage: lang,
+          geminiUsed: false,
+        });
+      }
+
       const fallback = lang === "hi"
         ? `आपने जो साझा किया उसके लिए धन्यवाद। अभी तकनीकी समस्या हो रही है, लेकिन आपकी भावनाएं महत्वपूर्ण हैं।
 
@@ -388,6 +336,7 @@ I'll be back to full capacity soon. You're doing great by reaching out. 💙`;
         source: "rule",
         isCrisis: false,
         detectedLanguage: lang,
+        geminiUsed: false,
       });
     }
   } catch (error) {

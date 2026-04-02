@@ -73,7 +73,7 @@ interface PostAnalyzerProps {
 
 export default function PostAnalyzer({ onAnalysisComplete, initialResult = null }: PostAnalyzerProps) {
   const [text, setText] = useState("");
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState("auto");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResponse | null>(initialResult);
   const [error, setError] = useState<string | null>(null);

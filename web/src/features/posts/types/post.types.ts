@@ -1,5 +1,7 @@
 export type MentalState = "Depression" | "Anxiety" | "Neutral" | "Bipolar" | "Stress" | "Error";
 
+export type RiskLevel = "Low" | "Medium" | "High";
+
 export interface Prediction {
   label: string;
   confidence: number;
@@ -8,9 +10,20 @@ export interface Prediction {
 export interface MLData {
   label: string;
   confidence: number;
+  labels?: string[];
   probabilities?: Record<string, number>;
   allPredictions?: Prediction[];
   rawProbs?: number[];
+  shapData?: {
+    tokens: string[];
+    scores: number[];
+  };
+}
+
+export interface GeminiInsight {
+  emotionalInsight: string;
+  suggestedSupport: string[];
+  riskLevel: RiskLevel;
 }
 
 export interface AnalysisResponse {
@@ -25,6 +38,15 @@ export interface AnalysisResponse {
   updatedAt?: string;
   userId?: string;
   language?: string;
+  // Gemini fallback fields
+  geminiInsight?: GeminiInsight;
+  fallbackUsed?: boolean;
+  riskLevel?: RiskLevel;
+  crisisEscalation?: boolean;
+  // Multilingual fields
+  detectedLanguage?: string;
+  wasTranslated?: boolean;
+  originalText?: string;
 }
 
 export interface AnalysisDocument extends AnalysisResponse {

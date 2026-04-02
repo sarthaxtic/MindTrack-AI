@@ -28,6 +28,8 @@ export interface ChatResponse {
   isCrisis: boolean;
   crisisResources?: CrisisResource[];
   detectedLanguage?: string;
+  geminiUsed?: boolean;
+  complexityDetected?: boolean;
 }
 
 export interface CrisisResource {
